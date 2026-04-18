@@ -68,4 +68,16 @@ public class HeroesController : ControllerBase {
             internalNotesAfterDeserialize = deserialized?.InternalNotes ?? "null - поле не было сериализовано, как и ожидалось"
         });
     }
+
+    [HttpGet("search")]
+    public ActionResult<List<Hero>> Search([FromQuery] string? name = null){
+        if (string.IsNullOrWhiteSpace(name)){
+            return BadRequest(new { Message = "Параметр name не может быть"});
+        }
+        var results = HeroesStore.Heroes
+            .Where(h => h.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        return Ok(results);
+    }
+
 }
